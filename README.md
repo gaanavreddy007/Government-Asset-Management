@@ -1,8 +1,3 @@
-# Government-Asset-Management
-Certainly! Here's a README file description for your application:
-
----
-
 # Government Asset Management App
 
 This is a simple web application for managing government assets. The application provides authentication and authorization features to ensure secure access to asset management functionalities.
