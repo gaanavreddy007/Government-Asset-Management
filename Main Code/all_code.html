@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Asset Management App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Dashboard Section -->
+<div class="container">
+  <h1>Dashboard</h1>
+  <!-- Dashboard content goes here -->
+  <p>Welcome, <span id="username"></span>!</p>
+    <h2>Key Metrics</h2>
+    <ul>
+      <li>Total Assets: 100</li>
+      <li>Active Assets: 80</li>
+      <li>Inactive Assets: 20</li>
+    </ul>
+    <h2>Quick Links</h2>
+    <ul>
+      <li><a href="#">Add New Asset</a></li>
+      <li><a href="#">View All Assets</a></li>
+      <li><a href="#">Generate Reports</a></li>
+    </ul>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <script src="dashboard.js"></script>
+</div>
+
+<!-- Asset Registration Section -->
+<div class="container">
+  <h1>Asset Registration</h1>
+  <!-- Asset registration content goes here -->
+  <form id="assetRegistrationForm">
+      <label for="assetName">Asset Name:</label>
+      <input type="text" id="assetName" required>
+      <label for="assetDescription">Asset Description:</label>
+      <textarea id="assetDescription" rows="4" required></textarea>
+      <button type="submit">Register Asset</button>
+    </form>
+    <button id="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <script src="asset_registration.js"></script>
+</div>
+
+<!-- Asset Details Section -->
+<div class="container">
+  <h1>Asset Details</h1>
+  <!-- Asset details content goes here -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Asset Details</h1>
+    <div id="assetDetails">
+      <p><strong>Name:</strong> Asset Name</p>
+      <p><strong>Description:</strong> Asset Description</p>
+      <!-- Add more asset details here as needed -->
+    </div>
+    <button id="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <script src="asset_details.js"></script>
+</div>
+
+<!-- Asset Tracking Section -->
+<div class="container">
+  <h1>Asset Tracking</h1>
+  <!-- Asset tracking content goes here -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Asset Tracking</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Asset ID</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody id="assetList">
+        <!-- Asset data will be populated here -->
+      </tbody>
+    </table>
+    <button id="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <script src="asset_tracking.js"></script>
+</div>
+
+<!-- Reports and Analytics Section -->
+<div class="container">
+  <h1>Reports and Analytics</h1>
+  <!-- Reports and analytics content goes here -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Reports and Analytics</h1>
+    <!-- Add report and analytics content here -->
+    <p>This page will contain various reports and analytics related to asset management.</p>
+    <button id="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <script src="reports_analytics.js"></script>
+</div>
+
+<!-- Notifications and Alerts Section -->
+<div class="container">
+  <h1>Notifications and Alerts</h1>
+  <!-- Notifications and alerts content goes here -->
+   <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Notifications and Alerts</h1>
+    <!-- Add notifications and alerts content here -->
+    <ul id="notificationList">
+      <!-- Notifications will be populated here -->
+    </ul>
+    <button id="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <script src="notifications_alerts.js"></script>
+</div>
+
+<!-- Settings and Configuration Section -->
+<div class="container">
+  <h1>Settings and Configuration</h1>
+  <!-- Settings and configuration content goes here -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Settings and Configuration</h1>
+    <!-- Add settings and configuration content here -->
+    <form id="configurationForm">
+      <label for="notificationEnabled">Enable Notifications:</label>
+      <input type="checkbox" id="notificationEnabled">
+      <label for="emailAddress">Email Address:</label>
+      <input type="email" id="emailAddress">
+      <button type="submit">Save Changes</button>
+    </form>
+    <button id="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <script src="settings_configuration.js"></script>
+</div>
+
+<!-- Help and Support Section -->
+<div class="container">
+  <h1>Help and Support</h1>
+  <!-- Help and support content goes here -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Help and Support</h1>
+    <!-- Add help and support content here -->
+    <p>This page provides information and resources for users who need help or support with the application.</p>
+    <ul>
+      <li><a href="faq.html">FAQs</a></li>
+      <li><a href="contact.html">Contact Us</a></li>
+    </ul>
+    <button id="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <script src="help_support.js"></script>
+</div>
+
+<!-- Security and Compliance Section -->
+<div class="container">
+  <h1>Security and Compliance</h1>
+  <!-- Security and compliance content goes here -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Security and Compliance</h1>
+    <!-- Add security and compliance content here -->
+    <p>This page demonstrates basic security and compliance measures such as authentication and data encryption.</p>
+    <button id="authenticateBtn">Authenticate</button>
+    <button id="encryptDataBtn">Encrypt Data</button>
+    <button id="decryptDataBtn">Decrypt Data</button>
+    <button id="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <script src="security_compliance.js"></script>
+</div>
+
+</body>
+</html>
