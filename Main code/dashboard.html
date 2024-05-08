@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Government Asset Management App</title>
+  <link rel="stylesheet" href="styles1.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboard</h1>
+    <p>Welcome, <span id="usernamePlaceholder"></span>!</p>
+    <h2>Key Metrics</h2>
+    <ul>
+      <li>Total Assets: 100</li>
+      <li>Active Assets: 80</li>
+      <li>Inactive Assets: 20</li>
+    </ul>
+    <h2>Quick Links</h2>
+    <ul>
+      <li><a href="asset_registration.html">Add New Asset</a></li>
+      <li><a href="asset_details.html">View All Assets</a></li>
+      <li><a href="reports_analytics.html">Generate Reports</a></li>
+    </ul>
+    <h2>Actions</h2>
+    <div class="actions">
+      <button id="notificationsBtn">Notifications</button>
+      <button id="settingsBtn">Settings</button>
+      <button id="securityBtn">Security</button>
+      <button id="helpBtn">Help</button>
+    </div>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
