@@ -1,0 +1,427 @@
+To link the web application to a Raspberry Pi Zero 2W and store all the data on it, you can follow these steps. This involves setting up a web server on the Raspberry Pi, a database to store the data, and modifying the web application to interact with this server and database.
+
+### Steps:
+
+1. **Set up Raspberry Pi Zero 2W:**
+   - Install the Raspberry Pi OS on the Pi.
+   - Connect the Pi to a network.
+   - Update the system packages.
+
+2. **Install a Web Server and Database:**
+   - Install a web server (e.g., Apache or Nginx).
+   - Install a database (e.g., MySQL or SQLite).
+   - Install PHP or Node.js to handle server-side processing.
+
+3. **Create a Backend to Handle Data Storage:**
+   - Create an API to handle requests from the web application.
+   - Use a server-side language like PHP, Python (Flask/Django), or Node.js (Express).
+
+4. **Modify the Web Application:**
+   - Update the JavaScript code to send data to the backend.
+   - Ensure the backend stores this data in the database.
+
+### Detailed Steps and Code:
+
+#### 1. Set up Raspberry Pi Zero 2W
+
+1. **Install Raspberry Pi OS:**
+   - Download Raspberry Pi Imager from the Raspberry Pi website.
+   - Use the Imager to write Raspberry Pi OS to a microSD card.
+   - Insert the microSD card into the Pi and boot it up.
+
+2. **Connect to Network:**
+   - Connect the Pi to a Wi-Fi network or via Ethernet.
+
+3. **Update System:**
+   ```sh
+   sudo apt update
+   sudo apt upgrade
+   ```
+
+#### 2. Install Web Server and Database
+
+1. **Install Apache:**
+   ```sh
+   sudo apt install apache2
+   sudo systemctl start apache2
+   sudo systemctl enable apache2
+   ```
+
+2. **Install MySQL:**
+   ```sh
+   sudo apt install mysql-server
+   sudo mysql_secure_installation
+   ```
+
+3. **Install PHP (for Apache):**
+   ```sh
+   sudo apt install php libapache2-mod-php php-mysql
+   ```
+
+   **Or Install Node.js (if you prefer using Node.js):**
+   ```sh
+   curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+   sudo apt install -y nodejs
+   sudo npm install -g npm
+   ```
+
+#### 3. Create a Backend to Handle Data Storage
+
+1. **Set Up the Database:**
+   - Log into MySQL:
+     ```sh
+     sudo mysql -u root -p
+     ```
+   - Create a database and a table to store asset data:
+     ```sql
+     CREATE DATABASE asset_management;
+     USE asset_management;
+     CREATE TABLE assets (
+         id INT AUTO_INCREMENT PRIMARY KEY,
+         name VARCHAR(255) NOT NULL,
+         type VARCHAR(255) NOT NULL,
+         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+     );
+     ```
+
+2. **Create Backend API:**
+
+   **Using PHP:**
+
+   - Create a file `api.php` in the Apache web root (`/var/www/html`):
+     ```php
+     <?php
+     header('Content-Type: application/json');
+     $conn = new mysqli('localhost', 'root', 'password', 'asset_management');
+
+     if ($conn->connect_error) {
+         die("Connection failed: " . $conn->connect_error);
+     }
+
+     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+         $name = $_POST['name'];
+         $type = $_POST['type'];
+         $sql = "INSERT INTO assets (name, type) VALUES ('$name', '$type')";
+         if ($conn->query($sql) === TRUE) {
+             echo json_encode(["success" => true]);
+         } else {
+             echo json_encode(["success" => false, "error" => $conn->error]);
+         }
+     } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+         $result = $conn->query("SELECT * FROM assets");
+         $assets = [];
+         while ($row = $result->fetch_assoc()) {
+             $assets[] = $row;
+         }
+         echo json_encode($assets);
+     }
+
+     $conn->close();
+     ?>
+     ```
+
+   **Or Using Node.js:**
+
+   - Create a directory for your Node.js project and initialize it:
+     ```sh
+     mkdir backend
+     cd backend
+     npm init -y
+     npm install express mysql
+     ```
+   - Create a file `server.js`:
+     ```javascript
+     const express = require('express');
+     const mysql = require('mysql');
+     const bodyParser = require('body-parser');
+
+     const app = express();
+     app.use(bodyParser.json());
+
+     const connection = mysql.createConnection({
+         host: 'localhost',
+         user: 'root',
+         password: 'password',
+         database: 'asset_management'
+     });
+
+     connection.connect();
+
+     app.post('/api/assets', (req, res) => {
+         const { name, type } = req.body;
+         const sql = 'INSERT INTO assets (name, type) VALUES (?, ?)';
+         connection.query(sql, [name, type], (error, results) => {
+             if (error) {
+                 res.status(500).json({ success: false, error });
+             } else {
+                 res.json({ success: true });
+             }
+         });
+     });
+
+     app.get('/api/assets', (req, res) => {
+         const sql = 'SELECT * FROM assets';
+         connection.query(sql, (error, results) => {
+             if (error) {
+                 res.status(500).json({ success: false, error });
+             } else {
+                 res.json(results);
+             }
+         });
+     });
+
+     app.listen(3000, () => {
+         console.log('Server running on port 3000');
+     });
+     ```
+
+   - Start the Node.js server:
+     ```sh
+     node server.js
+     ```
+
+#### 4. Modify the Web Application
+
+1. **Update JavaScript Code (scripts.js):**
+   ```javascript
+   document.addEventListener('DOMContentLoaded', function () {
+     // Elements
+     const loginForm = document.getElementById('loginForm');
+     const loginSection = document.getElementById('login-section');
+     const userDashboard = document.getElementById('user-dashboard');
+     const adminDashboard = document.getElementById('admin-dashboard');
+     const userNameSpan = document.getElementById('user-name');
+     const adminNameSpan = document.getElementById('admin-name');
+
+     // Admin sections
+     const addAssetSection = document.getElementById('add-asset-section');
+     const viewAllAssetsSection = document.getElementById('view-all-assets-section');
+     const generateReportsSection = document.getElementById('generate-reports-section');
+     const notificationsSection = document.getElementById('notifications-section');
+     const settingsSection = document.getElementById('settings-section');
+     const securitySection = document.getElementById('security-section');
+     const helpSection = document.getElementById('help-section');
+
+     // Login
+     loginForm.addEventListener('submit', function (event) {
+       event.preventDefault();
+       const username = document.getElementById('username').value;
+       const password = document.getElementById('password').value;
+       const role = document.getElementById('role').value;
+
+       if (username && password) {
+         localStorage.setItem('username', username);
+         localStorage.setItem('role', role);
+
+         loginSection.style.display = 'none';
+
+         if (role === 'user') {
+           userNameSpan.textContent = username;
+           userDashboard.style.display = 'block';
+         } else if (role === 'admin') {
+           adminNameSpan.textContent = username;
+           adminDashboard.style.display = 'block';
+         }
+       } else {
+         alert('Please enter a username and password.');
+       }
+     });
+
+     // Logout
+     document.getElementById('user-logoutBtn').addEventListener('click', function () {
+       localStorage.clear();
+       location.reload();
+     });
+
+     document.getElementById('admin-logoutBtn').addEventListener('click', function () {
+       localStorage.clear();
+       location.reload();
+     });
+
+     // Admin Quick Links
+     document.getElementById('admin-addAssetLink').addEventListener('click', function () {
+       adminDashboard.style.display = 'none';
+       addAssetSection.style.display = 'block';
+     });
+
+     document.getElementById('admin-viewAllAssetsLink').addEventListener('click', function () {
+       adminDashboard.style.display = 'none';
+       viewAllAssetsSection.style.display = 'block';
+       displayAssets();
+     });
+
+     document.getElementById('admin-generateReportsLink').addEventListener('click', function () {
+       adminDashboard.style.display = 'none';
+       generateReportsSection.style.display = 'block';
+     });
+
+     document.getElementById('admin-notificationsLink').addEventListener('click', function () {
+       adminDashboard.style.display = 'none';
+       notificationsSection.style.display = 'block';
+     });
+
+     document.getElementById('admin-settingsLink').addEventListener('click', function () {
+       adminDashboard.style.display = 'none';
+       settingsSection.style.display = 'block';
+     });
+
+     document.getElementById('admin-securityLink').addEventListener('click', function () {
+       adminDashboard.style.display = 'none';
+       securitySection.style.display = 'block';
+     });
+
+     document.getElementById('admin-helpLink').addEventListener('click', function () {
+       adminDashboard.style.display = 'none';
+       helpSection.style.display
+
+ = 'block';
+     });
+
+     // Back to Dashboard
+     document.querySelectorAll('.backToDashboardBtn').forEach(function (button) {
+       button.addEventListener('click', function () {
+         addAssetSection.style.display = 'none';
+         viewAllAssetsSection.style.display = 'none';
+         generateReportsSection.style.display = 'none';
+         notificationsSection.style.display = 'none';
+         settingsSection.style.display = 'none';
+         securitySection.style.display = 'none';
+         helpSection.style.display = 'none';
+         adminDashboard.style.display = 'block';
+       });
+     });
+
+     // Add Asset Form
+     document.getElementById('addAssetForm').addEventListener('submit', function (event) {
+       event.preventDefault();
+       const assetName = document.getElementById('assetName').value;
+       const assetType = document.getElementById('assetType').value;
+
+       fetch('/api/assets', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({ name: assetName, type: assetType })
+       })
+       .then(response => response.json())
+       .then(data => {
+         if (data.success) {
+           alert('Asset added successfully');
+           addAssetSection.style.display = 'none';
+           adminDashboard.style.display = 'block';
+         } else {
+           alert('Error adding asset: ' + data.error);
+         }
+       });
+     });
+
+     function displayAssets() {
+       fetch('/api/assets')
+       .then(response => response.json())
+       .then(data => {
+         const assetList = document.getElementById('assetList');
+         assetList.innerHTML = '';
+         data.forEach(asset => {
+           const li = document.createElement('li');
+           li.textContent = `ID: ${asset.id}, Name: ${asset.name}, Type: ${asset.type}, Created At: ${asset.created_at}`;
+           assetList.appendChild(li);
+         });
+       });
+     }
+   });
+   ```
+
+### CSS Code (styles.css)
+
+```css
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+}
+
+h1 {
+  margin: 0 0 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input, select, button {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+button {
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background-color: #f9f9f9;
+  margin-bottom: 5px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+```
+
+### Summary:
+
+1. **Set up the Raspberry Pi:**
+   - Install Raspberry Pi OS and update it.
+   - Install Apache, MySQL, and PHP or Node.js.
+
+2. **Create and configure the database:**
+   - Create a database and table to store asset information.
+
+3. **Create the backend:**
+   - Use PHP or Node.js to create an API that handles data storage and retrieval.
+
+4. **Update the web application:**
+   - Modify the JavaScript code to interact with the backend API.
+   - Use the provided HTML, JavaScript, and CSS code.
+
+5. **Deploy the web application:**
+   - Place the HTML, CSS, and JavaScript files in the appropriate directory of the web server (e.g., `/var/www/html` for Apache).
+
+6. **Test the application:**
+   - Access the web application via the Raspberry Pi's IP address and ensure all functionalities are working as expected.
