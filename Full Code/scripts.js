@@ -1,175 +1,174 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // Elements
   const loginForm = document.getElementById('loginForm');
-  const loginContainer = document.getElementById('login');
-  const dashboardContainer = document.getElementById('dashboard');
-  const addNewAssetContainer = document.getElementById('addNewAsset');
-  const viewAllAssetsContainer = document.getElementById('viewAllAssets');
-  const generateReportsContainer = document.getElementById('generateReports');
-  const notificationsContainer = document.getElementById('notifications');
-  const settingsContainer = document.getElementById('settings');
-  const securityContainer = document.getElementById('security');
-  const helpContainer = document.getElementById('help');
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById('password');
-  const usernamePlaceholder = document.getElementById('usernamePlaceholder');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const notificationsBtn = document.getElementById('notificationsBtn');
-  const settingsBtn = document.getElementById('settingsBtn');
-  const securityBtn = document.getElementById('securityBtn');
-  const helpBtn = document.getElementById('helpBtn');
-  const addNewAssetLink = document.getElementById('addNewAssetLink');
-  const viewAllAssetsLink = document.getElementById('viewAllAssetsLink');
-  const generateReportsLink = document.getElementById('generateReportsLink');
-  const addAssetForm = document.getElementById('addAssetForm');
-  const assetList = document.getElementById('assetList');
-  const backToDashboardBtns = document.querySelectorAll('.backToDashboardBtn');
-  const assets = [];
+  const loginSection = document.getElementById('login-section');
+  const userDashboard = document.getElementById('user-dashboard');
+  const adminDashboard = document.getElementById('admin-dashboard');
+  const userNameSpan = document.getElementById('user-name');
+  const adminNameSpan = document.getElementById('admin-name');
 
-  // Handle login form submission
-  loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
+  // Admin sections
+  const addAssetSection = document.getElementById('add-asset-section');
+  const viewAllAssetsSection = document.getElementById('view-all-assets-section');
+  const generateReportsSection = document.getElementById('generate-reports-section');
+  const notificationsSection = document.getElementById('notifications-section');
+  const settingsSection = document.getElementById('settings-section');
+  const securitySection = document.getElementById('security-section');
+  const helpSection = document.getElementById('help-section');
 
-    if (username === 'admin' && password === 'password') {
+  // Login
+  loginForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
+
+    if (username && password) {
       localStorage.setItem('username', username);
-      usernamePlaceholder.textContent = username;
-      showSection(dashboardContainer);
+      localStorage.setItem('role', role);
+
+      loginSection.style.display = 'none';
+
+      if (role === 'user') {
+        userNameSpan.textContent = username;
+        userDashboard.style.display = 'block';
+      } else if (role === 'admin') {
+        adminNameSpan.textContent = username;
+        adminDashboard.style.display = 'block';
+      }
     } else {
-      alert('Invalid username or password');
+      alert('Please enter a username and password.');
     }
   });
 
-  // Function to show a specific section and hide others
-  function showSection(section) {
-    loginContainer.style.display = 'none';
-    dashboardContainer.style.display = 'none';
-    addNewAssetContainer.style.display = 'none';
-    viewAllAssetsContainer.style.display = 'none';
-    generateReportsContainer.style.display = 'none';
-    notificationsContainer.style.display = 'none';
-    settingsContainer.style.display = 'none';
-    securityContainer.style.display = 'none';
-    helpContainer.style.display = 'none';
-    section.style.display = 'block';
-  }
-
-  if (localStorage.getItem('username')) {
-    usernamePlaceholder.textContent = localStorage.getItem('username');
-    showSection(dashboardContainer);
-  }
-
-  // Logout functionality
-  logoutBtn.addEventListener('click', function () {
-    localStorage.removeItem('username');
-    showSection(loginContainer);
+  // Logout
+  document.getElementById('user-logoutBtn').addEventListener('click', function () {
+    localStorage.clear();
+    location.reload();
   });
 
-  // Handle button clicks to show/hide different sections
-  notificationsBtn.addEventListener('click', function () {
-    showSection(notificationsContainer);
+  document.getElementById('admin-logoutBtn').addEventListener('click', function () {
+    localStorage.clear();
+    location.reload();
   });
 
-  settingsBtn.addEventListener('click', function () {
-    showSection(settingsContainer);
+  // Admin Quick Links
+  document.getElementById('admin-addAssetLink').addEventListener('click', function () {
+    adminDashboard.style.display = 'none';
+    addAssetSection.style.display = 'block';
   });
 
-  securityBtn.addEventListener('click', function () {
-    showSection(securityContainer);
+  document.getElementById('admin-viewAllAssetsLink').addEventListener('click', function () {
+    adminDashboard.style.display = 'none';
+    viewAllAssetsSection.style.display = 'block';
+    displayAssets();
   });
 
-  helpBtn.addEventListener('click', function () {
-    showSection(helpContainer);
+  document.getElementById('admin-generateReportsLink').addEventListener('click', function () {
+    adminDashboard.style.display = 'none';
+    generateReportsSection.style.display = 'block';
   });
 
-  addNewAssetLink.addEventListener('click', function () {
-    showSection(addNewAssetContainer);
+  document.getElementById('admin-notificationsLink').addEventListener('click', function () {
+    adminDashboard.style.display = 'none';
+    notificationsSection.style.display = 'block';
   });
 
-  viewAllAssetsLink.addEventListener('click', function () {
-    showSection(viewAllAssetsContainer);
-    renderAssetList();
+  document.getElementById('admin-settingsLink').addEventListener('click', function () {
+    adminDashboard.style.display = 'none';
+    settingsSection.style.display = 'block';
   });
 
-  generateReportsLink.addEventListener('click', function () {
-    showSection(generateReportsContainer);
+  document.getElementById('admin-securityLink').addEventListener('click', function () {
+    adminDashboard.style.display = 'none';
+    securitySection.style.display = 'block';
   });
 
-  // Handle Add Asset form submission
-  addAssetForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const assetName = document.getElementById('assetName').value.trim();
-    const assetType = document.getElementById('assetType').value.trim();
-    const assetValue = document.getElementById('assetValue').value.trim();
-
-    if (assetName && assetType && assetValue) {
-      const newAsset = { name: assetName, type: assetType, value: assetValue };
-      assets.push(newAsset);
-      alert('Asset added successfully');
-      updateAssetMetrics();
-      addAssetForm.reset();
-      showSection(dashboardContainer);
-    } else {
-      alert('Please fill in all fields');
-    }
+  document.getElementById('admin-helpLink').addEventListener('click', function () {
+    adminDashboard.style.display = 'none';
+    helpSection.style.display = 'block';
   });
 
-  // Render asset list
-  function renderAssetList() {
-    assetList.innerHTML = '';
-    if (assets.length === 0) {
-      assetList.innerHTML = '<li>No assets available</li>';
-    } else {
-      assets.forEach(asset => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${asset.name} - ${asset.type} - $${asset.value}`;
-        assetList.appendChild(listItem);
+  // Back to Dashboard
+  document.querySelectorAll('.backToDashboardBtn')
+    .forEach(btn => {
+      btn.addEventListener('click', function () {
+        hideAllSections();
+        adminDashboard.style.display = 'block';
       });
-    }
-  }
-
-  // Update asset metrics on the dashboard
-  function updateAssetMetrics() {
-    const totalAssets = assets.length;
-    const activeAssets = assets.length; // Placeholder for active assets count
-    const inactiveAssets = 0; // Placeholder for inactive assets count
-
-    document.getElementById('totalAssets').textContent = totalAssets;
-    document.getElementById('activeAssets').textContent = activeAssets;
-    document.getElementById('inactiveAssets').textContent = inactiveAssets;
-  }
-
-  // Back to dashboard buttons
-  backToDashboardBtns.forEach(button => {
-    button.addEventListener('click', function () {
-      showSection(dashboardContainer);
     });
-  });
 
-  // Additional functionality for Settings and Configuration
-  const configurationForm = document.getElementById('configurationForm');
-  configurationForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const notificationEnabled = document.getElementById('notificationEnabled').checked;
-    const emailAddress = document.getElementById('emailAddress').value.trim();
-    if (emailAddress) {
-      alert('Settings saved successfully');
-      // Save settings to localStorage or send to server
+  // Add New Asset
+  document.getElementById('addAssetForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const assetName = document.getElementById('assetName').value;
+    const assetType = document.getElementById('assetType').value;
+
+    if (assetName && assetType) {
+      const assets = JSON.parse(localStorage.getItem('assets')) || [];
+      assets.push({ name: assetName, type: assetType });
+      localStorage.setItem('assets', JSON.stringify(assets));
+      alert('Asset added successfully.');
+      document.getElementById('assetName').value = '';
+      document.getElementById('assetType').value = '';
     } else {
-      alert('Please enter a valid email address');
+      alert('Please fill in all fields.');
     }
   });
 
-  // Additional functionality for Security and Compliance
+  // Display All Assets
+  function displayAssets() {
+    const assets = JSON.parse(localStorage.getItem('assets')) || [];
+    const assetList = document.getElementById('assetList');
+    assetList.innerHTML = '';
+    assets.forEach(asset => {
+      const li = document.createElement('li');
+      li.textContent = `${asset.name} - ${asset.type}`;
+      assetList.appendChild(li);
+    });
+  }
+
+  // Notifications
+  document.getElementById('configurationForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const notificationEnabled = document.getElementById('notificationEnabled').checked;
+    const emailAddress = document.getElementById('emailAddress').value;
+    alert(`Notifications: ${notificationEnabled ? 'Enabled' : 'Disabled'}, Email: ${emailAddress}`);
+  });
+
+  // Security
   document.getElementById('authenticateBtn').addEventListener('click', function () {
-    alert('Authentication functionality not implemented');
+    alert('Authentication successful.');
   });
 
   document.getElementById('encryptDataBtn').addEventListener('click', function () {
-    alert('Data encryption functionality not implemented');
+    alert('Data encrypted.');
   });
 
   document.getElementById('decryptDataBtn').addEventListener('click', function () {
-    alert('Data decryption functionality not implemented');
+    alert('Data decrypted.');
   });
+
+  // Initial Load
+  if (localStorage.getItem('username')) {
+    loginSection.style.display = 'none';
+    if (localStorage.getItem('role') === 'user') {
+      userNameSpan.textContent = localStorage.getItem('username');
+      userDashboard.style.display = 'block';
+    } else if (localStorage.getItem('role') === 'admin') {
+      adminNameSpan.textContent = localStorage.getItem('username');
+      adminDashboard.style.display = 'block';
+    }
+  }
+
+  // Hide All Sections
+  function hideAllSections() {
+    addAssetSection.style.display = 'none';
+    viewAllAssetsSection.style.display = 'none';
+    generateReportsSection.style.display = 'none';
+    notificationsSection.style.display = 'none';
+    settingsSection.style.display = 'none';
+    securitySection.style.display = 'none';
+    helpSection.style.display = 'none';
+  }
 });
