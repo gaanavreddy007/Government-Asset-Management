@@ -1,52 +1,49 @@
-/* Reset some basic styles */
-* {
+/* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  color: #343a40;
-  line-height: 1.6;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 600px;
   margin: 50px auto;
   padding: 20px;
-  background-color: #ffffff;
+  background-color: white;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-  margin-bottom: 20px;
-  font-size: 2rem;
-  color: #007bff;
   text-align: center;
+  color: #333;
 }
 
-input, button {
-  width: 100%;
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select {
+  margin-bottom: 10px;
   padding: 10px;
-  margin-bottom: 15px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  border: 1px solid #ced4da;
-}
-
-input:focus, button:focus {
-  outline: none;
-  border-color: #007bff;
 }
 
 button {
+  padding: 10px;
   background-color: #007bff;
-  color: #ffffff;
+  color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin-top: 10px;
 }
 
 button:hover {
@@ -58,18 +55,17 @@ ul {
   padding: 0;
 }
 
-li {
+ul li {
   margin-bottom: 10px;
 }
 
 a {
-  text-decoration: none;
   color: #007bff;
-  transition: color 0.3s ease;
+  text-decoration: none;
 }
 
 a:hover {
-  color: #0056b3;
+  text-decoration: underline;
 }
 
 .backToDashboardBtn {
@@ -79,62 +75,4 @@ a:hover {
 
 .backToDashboardBtn:hover {
   background-color: #5a6268;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-form label {
-  font-weight: bold;
-}
-
-form input[type="email"], form input[type="checkbox"] {
-  width: auto;
-}
-
-form button {
-  align-self: flex-start;
-}
-
-.container ul {
-  margin-top: 20px;
-}
-
-.container ul li {
-  padding: 10px;
-  background-color: #e9ecef;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-}
-
-.container ul li:not(:last-child) {
-  margin-bottom: 10px;
-}
-
-p {
-  margin-bottom: 20px;
-}
-
-h2 {
-  margin-bottom: 15px;
-  color: #495057;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 5px;
-}
-
-span#usernamePlaceholder {
-  font-weight: bold;
-  color: #007bff;
-}
-
-.metrics, .links, .actions {
-  margin-bottom: 20px;
-}
-
-.actions button {
-  width: auto;
-  margin-right: 10px;
 }
