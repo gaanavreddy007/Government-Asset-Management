@@ -20,31 +20,19 @@
     </form>
   </div>
 
-  <div id="user-dashboard" class="container" style="display:none;">
+  <div id="user-dashboard" class="container" style="display: none;">
     <h1>User Dashboard</h1>
     <p>Welcome, <span id="user-name"></span>!</p>
-    <h2>Key Metrics</h2>
-    <ul>
-      <li>Total Assets: 100</li>
-      <li>Active Assets: 80</li>
-      <li>Inactive Assets: 20</li>
-    </ul>
-    <h2>Quick Links</h2>
-    <ul>
-      <li><a href="#" id="user-viewAllAssetsLink">View All Assets</a></li>
-    </ul>
+    <h2>Your Assets</h2>
+    <ul id="user-assetList"></ul>
     <button id="user-logoutBtn">Logout</button>
   </div>
 
-  <div id="admin-dashboard" class="container" style="display:none;">
+  <div id="admin-dashboard" class="container" style="display: none;">
     <h1>Admin Dashboard</h1>
     <p>Welcome, <span id="admin-name"></span>!</p>
     <h2>Key Metrics</h2>
-    <ul>
-      <li>Total Assets: 100</li>
-      <li>Active Assets: 80</li>
-      <li>Inactive Assets: 20</li>
-    </ul>
+    <ul id="key-metrics"></ul>
     <h2>Quick Links</h2>
     <ul>
       <li><a href="#" id="admin-addAssetLink">Add New Asset</a></li>
@@ -58,30 +46,36 @@
     <button id="admin-logoutBtn">Logout</button>
   </div>
 
-  <div id="add-asset-section" class="container" style="display:none;">
+  <div id="add-asset-section" class="container" style="display: none;">
     <h1>Add New Asset</h1>
     <form id="addAssetForm">
-      <input type="text" id="assetName" placeholder="Asset Name" required>
-      <input type="text" id="assetType" placeholder="Asset Type" required>
+      <input type="text" placeholder="Asset Name" id="assetName" required>
+      <input type="text" placeholder="Asset Type" id="assetType" required>
       <button type="submit">Add Asset</button>
     </form>
     <button class="backToDashboardBtn">Back to Dashboard</button>
   </div>
 
-  <div id="view-all-assets-section" class="container" style="display:none;">
+  <div id="view-all-assets-section" class="container" style="display: none;">
     <h1>All Assets</h1>
     <ul id="assetList"></ul>
-    <button class="backToDashboardBtn" id="backToAdminDashboardBtnFromView">Back to Dashboard</button>
+    <button class="backToDashboardBtn">Back to Dashboard</button>
   </div>
 
-  <div id="generate-reports-section" class="container" style="display:none;">
+  <div id="generate-reports-section" class="container" style="display: none;">
     <h1>Generate Reports</h1>
-    <p>Reports functionality not yet implemented.</p>
-    <button class="backToDashboardBtn" id="backToAdminDashboardBtnFromReports">Back to Dashboard</button>
+    <ul id="reportList"></ul>
+    <button class="backToDashboardBtn">Back to Dashboard</button>
   </div>
 
-  <div id="notifications-section" class="container" style="display:none;">
+  <div id="notifications-section" class="container" style="display: none;">
     <h1>Notifications</h1>
+    <ul id="notificationList"></ul>
+    <button class="backToDashboardBtn">Back to Dashboard</button>
+  </div>
+
+  <div id="settings-section" class="container" style="display: none;">
+    <h1>Settings</h1>
     <form id="configurationForm">
       <label for="notificationEnabled">Enable Notifications:</label>
       <input type="checkbox" id="notificationEnabled">
@@ -89,37 +83,24 @@
       <input type="email" id="emailAddress">
       <button type="submit">Save Changes</button>
     </form>
-    <button class="backToDashboardBtn" id="backToAdminDashboardBtnFromNotifications">Back to Dashboard</button>
+    <button class="backToDashboardBtn">Back to Dashboard</button>
   </div>
 
-  <div id="settings-section" class="container" style="display:none;">
-    <h1>Settings and Configuration</h1>
-    <form id="settingsForm">
-      <label for="setting1">Setting 1:</label>
-      <input type="text" id="setting1">
-      <label for="setting2">Setting 2:</label>
-      <input type="text" id="setting2">
-      <button type="submit">Save Changes</button>
-    </form>
-    <button class="backToDashboardBtn" id="backToAdminDashboardBtnFromSettings">Back to Dashboard</button>
-  </div>
-
-  <div id="security-section" class="container" style="display:none;">
-    <h1>Security and Compliance</h1>
+  <div id="security-section" class="container" style="display: none;">
+    <h1>Security</h1>
     <button id="authenticateBtn">Authenticate</button>
     <button id="encryptDataBtn">Encrypt Data</button>
     <button id="decryptDataBtn">Decrypt Data</button>
-    <button class="backToDashboardBtn" id="backToAdminDashboardBtnFromSecurity">Back to Dashboard</button>
+    <button class="backToDashboardBtn">Back to Dashboard</button>
   </div>
 
-  <div id="help-section" class="container" style="display:none;">
-    <h1>Help and Support</h1>
-    <p>This page provides information and resources for users who need help or support with the application.</p>
+  <div id="help-section" class="container" style="display: none;">
+    <h1>Help & Support</h1>
     <ul>
-      <li><a href="faq.html">FAQs</a></li>
-      <li><a href="contact.html">Contact Us</a></li>
+      <li><a href="#">FAQs</a></li>
+      <li><a href="#">Contact Us</a></li>
     </ul>
-    <button class="backToDashboardBtn" id="backToAdminDashboardBtnFromHelp">Back to Dashboard</button>
+    <button class="backToDashboardBtn">Back to Dashboard</button>
   </div>
 
   <script src="scripts.js"></script>
