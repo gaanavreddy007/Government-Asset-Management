@@ -1,427 +1,241 @@
-To link the web application to a Raspberry Pi Zero 2W and store all the data on it, you can follow these steps. This involves setting up a web server on the Raspberry Pi, a database to store the data, and modifying the web application to interact with this server and database.
+Setting up a Raspberry Pi involves several steps, including installing the operating system, connecting to WiFi, and deploying your application. Here's a detailed guide:
 
-### Steps:
+### 1. Initial Setup of Raspberry Pi
 
-1. **Set up Raspberry Pi Zero 2W:**
-   - Install the Raspberry Pi OS on the Pi.
-   - Connect the Pi to a network.
-   - Update the system packages.
+#### A. Prepare the SD Card
 
-2. **Install a Web Server and Database:**
-   - Install a web server (e.g., Apache or Nginx).
-   - Install a database (e.g., MySQL or SQLite).
-   - Install PHP or Node.js to handle server-side processing.
+1. **Download Raspberry Pi Imager:**
+   - Download and install the Raspberry Pi Imager from the official Raspberry Pi website: [Raspberry Pi Imager](https://www.raspberrypi.org/software/).
 
-3. **Create a Backend to Handle Data Storage:**
-   - Create an API to handle requests from the web application.
-   - Use a server-side language like PHP, Python (Flask/Django), or Node.js (Express).
+2. **Flash Raspberry Pi OS:**
+   - Insert your SD card into your computer.
+   - Open Raspberry Pi Imager.
+   - Select the OS: Choose "Raspberry Pi OS (32-bit)".
+   - Select your SD card.
+   - Click "Write" and wait for the process to complete.
 
-4. **Modify the Web Application:**
-   - Update the JavaScript code to send data to the backend.
-   - Ensure the backend stores this data in the database.
+#### B. Configure WiFi and Enable SSH
 
-### Detailed Steps and Code:
-
-#### 1. Set up Raspberry Pi Zero 2W
-
-1. **Install Raspberry Pi OS:**
-   - Download Raspberry Pi Imager from the Raspberry Pi website.
-   - Use the Imager to write Raspberry Pi OS to a microSD card.
-   - Insert the microSD card into the Pi and boot it up.
-
-2. **Connect to Network:**
-   - Connect the Pi to a Wi-Fi network or via Ethernet.
-
-3. **Update System:**
-   ```sh
-   sudo apt update
-   sudo apt upgrade
-   ```
-
-#### 2. Install Web Server and Database
-
-1. **Install Apache:**
-   ```sh
-   sudo apt install apache2
-   sudo systemctl start apache2
-   sudo systemctl enable apache2
-   ```
-
-2. **Install MySQL:**
-   ```sh
-   sudo apt install mysql-server
-   sudo mysql_secure_installation
-   ```
-
-3. **Install PHP (for Apache):**
-   ```sh
-   sudo apt install php libapache2-mod-php php-mysql
-   ```
-
-   **Or Install Node.js (if you prefer using Node.js):**
-   ```sh
-   curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-   sudo apt install -y nodejs
-   sudo npm install -g npm
-   ```
-
-#### 3. Create a Backend to Handle Data Storage
-
-1. **Set Up the Database:**
-   - Log into MySQL:
+1. **Enable SSH and Set WiFi Credentials:**
+   - After the SD card is flashed, do not eject it.
+   - Open the SD card in your file explorer.
+   - Create an empty file named `ssh` (no file extension) in the root of the SD card to enable SSH.
+   - Create a file named `wpa_supplicant.conf` in the root of the SD card with the following content, replacing `SSID` and `PASSWORD` with your WiFi credentials:
      ```sh
-     sudo mysql -u root -p
-     ```
-   - Create a database and a table to store asset data:
-     ```sql
-     CREATE DATABASE asset_management;
-     USE asset_management;
-     CREATE TABLE assets (
-         id INT AUTO_INCREMENT PRIMARY KEY,
-         name VARCHAR(255) NOT NULL,
-         type VARCHAR(255) NOT NULL,
-         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-     );
-     ```
+     country=US
+     ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+     update_config=1
 
-2. **Create Backend API:**
-
-   **Using PHP:**
-
-   - Create a file `api.php` in the Apache web root (`/var/www/html`):
-     ```php
-     <?php
-     header('Content-Type: application/json');
-     $conn = new mysqli('localhost', 'root', 'password', 'asset_management');
-
-     if ($conn->connect_error) {
-         die("Connection failed: " . $conn->connect_error);
+     network={
+       ssid="SSID"
+       psk="PASSWORD"
      }
-
-     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-         $name = $_POST['name'];
-         $type = $_POST['type'];
-         $sql = "INSERT INTO assets (name, type) VALUES ('$name', '$type')";
-         if ($conn->query($sql) === TRUE) {
-             echo json_encode(["success" => true]);
-         } else {
-             echo json_encode(["success" => false, "error" => $conn->error]);
-         }
-     } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-         $result = $conn->query("SELECT * FROM assets");
-         $assets = [];
-         while ($row = $result->fetch_assoc()) {
-             $assets[] = $row;
-         }
-         echo json_encode($assets);
-     }
-
-     $conn->close();
-     ?>
      ```
 
-   **Or Using Node.js:**
+2. **Insert the SD Card:**
+   - Safely eject the SD card from your computer and insert it into the Raspberry Pi.
 
-   - Create a directory for your Node.js project and initialize it:
+3. **Power Up the Pi:**
+   - Connect the Raspberry Pi to a power source. It will boot up and connect to your WiFi network.
+
+### 2. Connect to the Raspberry Pi
+
+#### A. Find the Pi’s IP Address
+
+1. **Use an IP Scanner:**
+   - Use a network IP scanner (e.g., Angry IP Scanner) to find the Raspberry Pi's IP address on your network.
+   - Alternatively, check your router’s connected devices list.
+
+#### B. SSH into the Pi
+
+1. **Open Terminal:**
+   - On your computer, open a terminal (or use an SSH client like PuTTY on Windows).
+   - Connect to the Raspberry Pi using its IP address:
      ```sh
-     mkdir backend
-     cd backend
+     ssh pi@<raspberry_pi_ip>
+     ```
+   - The default password is `raspberry`.
+
+### 3. Set Up Your Web Application
+
+#### A. Install Necessary Software
+
+1. **Update and Upgrade:**
+   - Update the package list and upgrade all packages:
+     ```sh
+     sudo apt-get update
+     sudo apt-get upgrade
+     ```
+
+2. **Install Node.js and npm:**
+   - Install Node.js and npm:
+     ```sh
+     sudo apt-get install -y nodejs npm
+     ```
+
+3. **Install a Web Server:**
+   - For a simple setup, you can use a lightweight web server like `express` in Node.js.
+
+#### B. Set Up the Web Application
+
+1. **Transfer Your Code:**
+   - Transfer your HTML, CSS, and JavaScript files to the Raspberry Pi using `scp` or any file transfer method you prefer.
+
+2. **Set Up the Project:**
+   - On the Raspberry Pi, create a directory for your project and navigate to it:
+     ```sh
+     mkdir my-web-app
+     cd my-web-app
+     ```
+
+3. **Initialize a Node.js Project:**
+   - Initialize a new Node.js project:
+     ```sh
      npm init -y
-     npm install express mysql
      ```
-   - Create a file `server.js`:
-     ```javascript
+
+4. **Install Express:**
+   - Install Express:
+     ```sh
+     npm install express
+     ```
+
+5. **Create a Server File:**
+   - Create a file named `server.js` in the project directory with the following content:
+     ```js
      const express = require('express');
-     const mysql = require('mysql');
-     const bodyParser = require('body-parser');
-
+     const path = require('path');
      const app = express();
-     app.use(bodyParser.json());
+     const port = 3000;
 
-     const connection = mysql.createConnection({
-         host: 'localhost',
-         user: 'root',
-         password: 'password',
-         database: 'asset_management'
+     // Serve static files from the public directory
+     app.use(express.static(path.join(__dirname, 'public')));
+
+     app.get('/', (req, res) => {
+       res.sendFile(path.join(__dirname, 'public', 'index.html'));
      });
 
-     connection.connect();
-
-     app.post('/api/assets', (req, res) => {
-         const { name, type } = req.body;
-         const sql = 'INSERT INTO assets (name, type) VALUES (?, ?)';
-         connection.query(sql, [name, type], (error, results) => {
-             if (error) {
-                 res.status(500).json({ success: false, error });
-             } else {
-                 res.json({ success: true });
-             }
-         });
-     });
-
-     app.get('/api/assets', (req, res) => {
-         const sql = 'SELECT * FROM assets';
-         connection.query(sql, (error, results) => {
-             if (error) {
-                 res.status(500).json({ success: false, error });
-             } else {
-                 res.json(results);
-             }
-         });
-     });
-
-     app.listen(3000, () => {
-         console.log('Server running on port 3000');
+     app.listen(port, () => {
+       console.log(`Server running at http://localhost:${port}`);
      });
      ```
 
-   - Start the Node.js server:
+6. **Organize Your Files:**
+   - Create a directory named `public` in your project directory and move all your HTML, CSS, and JavaScript files into it.
+
+7. **Start the Server:**
+   - Start your server:
      ```sh
      node server.js
      ```
 
-#### 4. Modify the Web Application
+8. **Access Your Application:**
+   - Open a web browser on any device connected to the same network and go to `http://<raspberry_pi_ip>:3000`.
 
-1. **Update JavaScript Code (scripts.js):**
-   ```javascript
-   document.addEventListener('DOMContentLoaded', function () {
-     // Elements
-     const loginForm = document.getElementById('loginForm');
-     const loginSection = document.getElementById('login-section');
-     const userDashboard = document.getElementById('user-dashboard');
-     const adminDashboard = document.getElementById('admin-dashboard');
-     const userNameSpan = document.getElementById('user-name');
-     const adminNameSpan = document.getElementById('admin-name');
+### 4. Additional Configuration
 
-     // Admin sections
-     const addAssetSection = document.getElementById('add-asset-section');
-     const viewAllAssetsSection = document.getElementById('view-all-assets-section');
-     const generateReportsSection = document.getElementById('generate-reports-section');
-     const notificationsSection = document.getElementById('notifications-section');
-     const settingsSection = document.getElementById('settings-section');
-     const securitySection = document.getElementById('security-section');
-     const helpSection = document.getElementById('help-section');
+#### A. Set Up the Server to Start on Boot
 
-     // Login
-     loginForm.addEventListener('submit', function (event) {
-       event.preventDefault();
-       const username = document.getElementById('username').value;
-       const password = document.getElementById('password').value;
-       const role = document.getElementById('role').value;
+1. **Install PM2:**
+   - PM2 is a process manager for Node.js applications:
+     ```sh
+     sudo npm install -g pm2
+     ```
 
-       if (username && password) {
-         localStorage.setItem('username', username);
-         localStorage.setItem('role', role);
+2. **Start Your Application with PM2:**
+   - Start your application:
+     ```sh
+     pm2 start server.js
+     ```
 
-         loginSection.style.display = 'none';
+3. **Set Up PM2 to Start on Boot:**
+   - Configure PM2 to start on boot:
+     ```sh
+     pm2 startup
+     pm2 save
+     ```
 
-         if (role === 'user') {
-           userNameSpan.textContent = username;
-           userDashboard.style.display = 'block';
-         } else if (role === 'admin') {
-           adminNameSpan.textContent = username;
-           adminDashboard.style.display = 'block';
-         }
-       } else {
-         alert('Please enter a username and password.');
+### 5. Storing Data on the Raspberry Pi
+
+#### A. Set Up a Database
+
+1. **Install SQLite:**
+   - SQLite is a lightweight database that is suitable for this project:
+     ```sh
+     sudo apt-get install sqlite3
+     ```
+
+2. **Initialize the Database:**
+   - Create a database and a table for storing asset information:
+     ```sh
+     sqlite3 assets.db
+     ```
+     ```sql
+     CREATE TABLE assets (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       name TEXT NOT NULL,
+       description TEXT,
+       status TEXT NOT NULL
+     );
+     .exit
+     ```
+
+#### B. Integrate SQLite with Your Application
+
+1. **Install SQLite for Node.js:**
+   - Install the SQLite package:
+     ```sh
+     npm install sqlite3
+     ```
+
+2. **Update Your Server File:**
+   - Modify your `server.js` to handle database operations. Here is a basic example:
+     ```js
+     const express = require('express');
+     const path = require('path');
+     const sqlite3 = require('sqlite3').verbose();
+     const app = express();
+     const port = 3000;
+
+     // Serve static files from the public directory
+     app.use(express.static(path.join(__dirname, 'public')));
+     app.use(express.json());
+
+     // Open database
+     let db = new sqlite3.Database('./assets.db', sqlite3.OPEN_READWRITE, (err) => {
+       if (err) {
+         console.error(err.message);
        }
+       console.log('Connected to the assets database.');
      });
 
-     // Logout
-     document.getElementById('user-logoutBtn').addEventListener('click', function () {
-       localStorage.clear();
-       location.reload();
-     });
-
-     document.getElementById('admin-logoutBtn').addEventListener('click', function () {
-       localStorage.clear();
-       location.reload();
-     });
-
-     // Admin Quick Links
-     document.getElementById('admin-addAssetLink').addEventListener('click', function () {
-       adminDashboard.style.display = 'none';
-       addAssetSection.style.display = 'block';
-     });
-
-     document.getElementById('admin-viewAllAssetsLink').addEventListener('click', function () {
-       adminDashboard.style.display = 'none';
-       viewAllAssetsSection.style.display = 'block';
-       displayAssets();
-     });
-
-     document.getElementById('admin-generateReportsLink').addEventListener('click', function () {
-       adminDashboard.style.display = 'none';
-       generateReportsSection.style.display = 'block';
-     });
-
-     document.getElementById('admin-notificationsLink').addEventListener('click', function () {
-       adminDashboard.style.display = 'none';
-       notificationsSection.style.display = 'block';
-     });
-
-     document.getElementById('admin-settingsLink').addEventListener('click', function () {
-       adminDashboard.style.display = 'none';
-       settingsSection.style.display = 'block';
-     });
-
-     document.getElementById('admin-securityLink').addEventListener('click', function () {
-       adminDashboard.style.display = 'none';
-       securitySection.style.display = 'block';
-     });
-
-     document.getElementById('admin-helpLink').addEventListener('click', function () {
-       adminDashboard.style.display = 'none';
-       helpSection.style.display
-
- = 'block';
-     });
-
-     // Back to Dashboard
-     document.querySelectorAll('.backToDashboardBtn').forEach(function (button) {
-       button.addEventListener('click', function () {
-         addAssetSection.style.display = 'none';
-         viewAllAssetsSection.style.display = 'none';
-         generateReportsSection.style.display = 'none';
-         notificationsSection.style.display = 'none';
-         settingsSection.style.display = 'none';
-         securitySection.style.display = 'none';
-         helpSection.style.display = 'none';
-         adminDashboard.style.display = 'block';
-       });
-     });
-
-     // Add Asset Form
-     document.getElementById('addAssetForm').addEventListener('submit', function (event) {
-       event.preventDefault();
-       const assetName = document.getElementById('assetName').value;
-       const assetType = document.getElementById('assetType').value;
-
-       fetch('/api/assets', {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json'
-         },
-         body: JSON.stringify({ name: assetName, type: assetType })
-       })
-       .then(response => response.json())
-       .then(data => {
-         if (data.success) {
-           alert('Asset added successfully');
-           addAssetSection.style.display = 'none';
-           adminDashboard.style.display = 'block';
-         } else {
-           alert('Error adding asset: ' + data.error);
+     // Handle asset addition
+     app.post('/add-asset', (req, res) => {
+       const { name, description, status } = req.body;
+       db.run(`INSERT INTO assets (name, description, status) VALUES (?, ?, ?)`, [name, description, status], function(err) {
+         if (err) {
+           return console.log(err.message);
          }
+         res.json({ id: this.lastID });
        });
      });
 
-     function displayAssets() {
-       fetch('/api/assets')
-       .then(response => response.json())
-       .then(data => {
-         const assetList = document.getElementById('assetList');
-         assetList.innerHTML = '';
-         data.forEach(asset => {
-           const li = document.createElement('li');
-           li.textContent = `ID: ${asset.id}, Name: ${asset.name}, Type: ${asset.type}, Created At: ${asset.created_at}`;
-           assetList.appendChild(li);
-         });
+     // Handle getting all assets
+     app.get('/assets', (req, res) => {
+       db.all(`SELECT * FROM assets`, [], (err, rows) => {
+         if (err) {
+           throw err;
+         }
+         res.json(rows);
        });
-     }
-   });
-   ```
+     });
 
-### CSS Code (styles.css)
+     app.listen(port, () => {
+       console.log(`Server running at http://localhost:${port}`);
+     });
+     ```
 
-```css
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+3. **Update Your Client Code:**
+   - Update your client-side JavaScript to make requests to these endpoints for adding and retrieving assets.
 
-.container {
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-}
-
-h1 {
-  margin: 0 0 20px;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-input, select, button {
-  margin-bottom: 10px;
-  padding: 10px;
-  font-size: 16px;
-}
-
-button {
-  background-color: #007BFF;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  background-color: #f9f9f9;
-  margin-bottom: 5px;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-a {
-  color: #007BFF;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-```
-
-### Summary:
-
-1. **Set up the Raspberry Pi:**
-   - Install Raspberry Pi OS and update it.
-   - Install Apache, MySQL, and PHP or Node.js.
-
-2. **Create and configure the database:**
-   - Create a database and table to store asset information.
-
-3. **Create the backend:**
-   - Use PHP or Node.js to create an API that handles data storage and retrieval.
-
-4. **Update the web application:**
-   - Modify the JavaScript code to interact with the backend API.
-   - Use the provided HTML, JavaScript, and CSS code.
-
-5. **Deploy the web application:**
-   - Place the HTML, CSS, and JavaScript files in the appropriate directory of the web server (e.g., `/var/www/html` for Apache).
-
-6. **Test the application:**
-   - Access the web application via the Raspberry Pi's IP address and ensure all functionalities are working as expected.
+By following these steps, you will have a fully functioning web application hosted on your Raspberry Pi Zero 2 W, with all data being stored locally on the device. The application will be accessible from any device on the same network, and it will start automatically on boot.
