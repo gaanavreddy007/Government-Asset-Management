@@ -12,7 +12,7 @@ This is a simple web application for managing government assets. The application
 ## Technologies Used
 
 - **Frontend**: HTML, CSS, JavaScript, React
-- **Backend**: (Backend technology/framework of your choice, if applicable)
+- **Backend**: PHP
 - **Routing**: React Router
 - **Styling**: CSS for styling
 - **Authentication**: Custom authentication logic (replace with authentication library or backend authentication mechanism if applicable)
